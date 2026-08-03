@@ -1049,6 +1049,7 @@ select.form-control { cursor: pointer; background-image: url("data:image/svg+xml
   color: var(--neutral-300);
   transition: color 0.15s, transform 0.1s;
   user-select: none;
+  font-size: 30px;
 }
 .star-rating label:hover,
 .star-rating label:hover ~ label,
