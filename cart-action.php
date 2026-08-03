@@ -14,7 +14,8 @@ switch ($action) {
     case 'add':
         add_to_cart((int)$_POST['product_id'], max(1, (int)($_POST['quantity'] ?? 1)));
         flash('success', 'Product added to cart!');
-        redirect($_POST['redirect'] ?? 'cart.php');
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        redirect($referer ?: ($_POST['redirect'] ?? 'index.php'));
         break;
 
     case 'update':

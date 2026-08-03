@@ -19,7 +19,7 @@ include __DIR__ . '/includes/header.php';
         </div>
 
         <div class="hero-image mb-4" style="aspect-ratio:16/9;max-height:400px">
-            <img src="<?= placeholder_image('Tooba Art Workshop', 800, 450) ?>" alt="Our Workshop">
+            <img src="https://images.pexels.com/photos/18609437/pexels-photo-18609437.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Our Workshop">
         </div>
 
         <div style="font-size:1.1rem;line-height:1.8;color:var(--neutral-700)">

@@ -38,7 +38,7 @@ include __DIR__ . '/includes/header.php';
             </div>
         </div>
         <div class="hero-image animate-in">
-            <img src="<?= placeholder_image('Beautiful Beads Collection', 800, 600) ?>" alt="Tooba Art Collection">
+            <img src="https://images.pexels.com/photos/1331705/pexels-photo-1331705.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Tooba Art Collection">
         </div>
     </div>
 </section>

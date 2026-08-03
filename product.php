@@ -73,7 +73,6 @@ include __DIR__ . '/includes/header.php';
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
                         <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
-                        <input type="hidden" name="redirect" value="cart.php">
                         <div class="form-group" style="margin-bottom:0">
                             <label>Quantity</label>
                             <input type="number" name="quantity" value="1" min="1" max="<?= (int)$product['stock'] ?>" class="form-control" style="width:80px">

@@ -24,7 +24,9 @@ include __DIR__ . '/includes/header.php';
                 $count = db()->query('SELECT COUNT(*) FROM products WHERE category_id='.(int)$cat['id'].' AND is_active=1')->fetchColumn();
             ?>
                 <a href="category.php?slug=<?= e($cat['slug']) ?>" class="cat-card">
-                    <img src="<?= e($cat['image'] ?: placeholder_image($cat['name'])) ?>" alt="<?= e($cat['name']) ?>">
+                    <div class="img-wrap">
+                        <img src="<?= e($cat['image'] ?: placeholder_image($cat['name'])) ?>" alt="<?= e($cat['name']) ?>">
+                    </div>
                     <div class="cat-card-body">
                         <h3><?= e($cat['name']) ?></h3>
                         <span class="count"><?= $count ?> products</span>

@@ -52,6 +52,31 @@ $cats = get_categories();
 document.querySelectorAll('.faq-q').forEach(q => {
     q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
 });
+
+// Close mobile nav when a link is clicked
+document.querySelectorAll('#mainNav a').forEach(a => {
+    a.addEventListener('click', () => {
+        document.getElementById('mainNav').classList.remove('open');
+    });
+});
+
+// Toast notifications for flash messages
+(function() {
+    var alerts = document.querySelectorAll('.alert-success, .alert-error');
+    alerts.forEach(function(alert) {
+        var toast = document.createElement('div');
+        toast.className = 'toast';
+        if (alert.classList.contains('alert-error')) toast.style.background = 'linear-gradient(135deg, #b83a3a, #8f3d27)';
+        toast.textContent = alert.textContent.trim();
+        document.body.appendChild(toast);
+        alert.style.display = 'none';
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3000);
+    });
+})();
 </script>
 </body>
 </html>
