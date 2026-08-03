@@ -222,3 +222,42 @@ function url($path) {
 function placeholder_image($text = 'Tooba Art', $w = 600, $h = 600) {
     return 'https://placehold.co/' . $w . 'x' . $h . '/f5efe6/b08968?text=' . urlencode($text);
 }
+
+function handle_image_upload($fieldName, $existingUrl = '') {
+    if (empty($_FILES[$fieldName]['name']) || $_FILES[$fieldName]['error'] !== UPLOAD_ERR_OK) {
+        return trim($_POST[$fieldName . '_url'] ?? '') ?: $existingUrl;
+    }
+
+    $file = $_FILES[$fieldName];
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimeType = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+
+    if (!in_array($mimeType, $allowedTypes)) {
+        flash('error', 'Invalid image format. Use JPG, PNG, WEBP, or GIF.');
+        return $existingUrl;
+    }
+
+    if ($file['size'] > 5 * 1024 * 1024) {
+        flash('error', 'Image too large. Maximum 5MB.');
+        return $existingUrl;
+    }
+
+    $ext = match ($mimeType) {
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/webp' => 'webp',
+        'image/gif'  => 'gif',
+    };
+    $filename = 'products/' . date('Ymd_His') . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+    $targetPath = __DIR__ . '/../assets/uploads/' . $filename;
+    if (!is_dir(dirname($targetPath))) mkdir(dirname($targetPath), 0775, true);
+
+    if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+        return 'assets/uploads/' . $filename;
+    }
+
+    flash('error', 'Failed to save image.');
+    return $existingUrl;
+}

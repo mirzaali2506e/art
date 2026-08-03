@@ -69,21 +69,23 @@ include __DIR__ . '/includes/header.php';
                 </p>
 
                 <?php if ($product['stock'] > 0): ?>
-                    <form method="post" action="cart-action.php" class="flex gap-2" style="align-items:flex-end;flex-wrap:wrap">
+                    <form method="post" action="cart-action.php" class="product-buy-form">
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
                         <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
-                        <div class="form-group" style="margin-bottom:0">
+                        <div class="product-qty-group">
                             <label>Quantity</label>
-                            <input type="number" name="quantity" value="1" min="1" max="<?= (int)$product['stock'] ?>" class="form-control" style="width:80px">
+                            <input type="number" name="quantity" value="1" min="1" max="<?= (int)$product['stock'] ?>" class="form-control">
                         </div>
-                        <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
-                        <a href="checkout.php?buy_now=<?= (int)$product['id'] ?>" class="btn btn-accent btn-lg">Buy Now</a>
+                        <div class="product-buy-buttons">
+                            <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
+                            <a href="checkout.php?buy_now=<?= (int)$product['id'] ?>" class="btn btn-accent btn-lg">Buy Now</a>
+                        </div>
                     </form>
                 <?php endif; ?>
 
-                <div class="mt-4" style="border-top:1px solid var(--neutral-200);padding-top:1.5rem">
-                    <p class="text-muted" style="font-size:0.9rem">
+                <div class="product-help-bar">
+                    <p class="text-muted">
                         <strong>Need help?</strong> WhatsApp us at <?= e(setting('whatsapp')) ?> for product questions or custom orders.
                     </p>
                 </div>
@@ -95,17 +97,20 @@ include __DIR__ . '/includes/header.php';
 <!-- Reviews section -->
 <section class="section" style="background:var(--neutral-100)">
     <div class="container">
-        <div class="grid grid-2" style="gap:3rem">
+        <div class="reviews-grid">
             <div>
                 <h2 class="mb-3">Customer Reviews</h2>
                 <?php if (empty($reviews)): ?>
                     <p class="text-muted">No reviews yet. Be the first to review this product!</p>
                 <?php else: ?>
                     <?php foreach ($reviews as $r): ?>
-                        <div class="review-card mb-2">
+                        <div class="review-card">
+                            <div class="flex-between mb-1">
+                                <span class="reviewer-name"><?= e($r['name']) ?></span>
+                                <span class="review-date"><?= date('M j, Y', strtotime($r['created_at'] ?? 'now')) ?></span>
+                            </div>
                             <div class="stars"><?= str_repeat('★', $r['rating']) . str_repeat('☆', 5 - $r['rating']) ?></div>
-                            <div class="name"><?= e($r['name']) ?></div>
-                            <p class="comment">"<?= e($r['comment']) ?>"</p>
+                            <p class="review-text"><?= e($r['comment']) ?></p>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -114,20 +119,21 @@ include __DIR__ . '/includes/header.php';
                 <h3 class="mb-3">Write a Review</h3>
                 <form method="post" action="review-submit.php" class="form-card" style="box-shadow:none;background:var(--neutral-0)">
                     <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
+                    <input type="hidden" name="slug" value="<?= e($product['slug']) ?>">
                     <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
                     <div class="form-group">
                         <label>Your Name</label>
                         <input type="text" name="name" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Rating</label>
-                        <select name="rating" class="form-control" required>
-                            <option value="5">★★★★★ (5 - Excellent)</option>
-                            <option value="4">★★★★☆ (4 - Very Good)</option>
-                            <option value="3">★★★☆☆ (3 - Good)</option>
-                            <option value="2">★★☆☆☆ (2 - Fair)</option>
-                            <option value="1">★☆☆☆☆ (1 - Poor)</option>
-                        </select>
+                        <label>Your Rating</label>
+                        <div class="star-rating">
+                            <input type="radio" name="rating" value="5" id="star5" required><label for="star5">★</label>
+                            <input type="radio" name="rating" value="4" id="star4"><label for="star4">★</label>
+                            <input type="radio" name="rating" value="3" id="star3"><label for="star3">★</label>
+                            <input type="radio" name="rating" value="2" id="star2"><label for="star2">★</label>
+                            <input type="radio" name="rating" value="1" id="star1"><label for="star1">★</label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Your Review</label>

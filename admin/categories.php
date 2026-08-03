@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $image = trim($_POST['image'] ?? '');
+    $image = handle_image_upload('image_file', trim($_POST['image_url'] ?? ''));
     $parentId = !empty($_POST['parent_id']) ? (int)$_POST['parent_id'] : null;
     $sortOrder = (int)($_POST['sort_order'] ?? 0);
     $isFeatured = isset($_POST['is_featured']) ? 1 : 0;
@@ -78,7 +78,7 @@ include __DIR__ . '/includes/header.php';
 <?php if ($error = flash('error')): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
 
 <?php if ($action === 'new' || ($action === 'edit' && $editCat)): ?>
-    <form method="post" action="categories.php?action=<?= $action === 'edit' ? 'edit&id='.$editId : 'create' ?>" class="form-card" style="max-width:none;box-shadow:var(--shadow-sm);background:var(--neutral-0)">
+    <form method="post" action="categories.php?action=<?= $action === 'edit' ? 'edit&id='.$editId : 'create' ?>" class="form-card" style="max-width:none;box-shadow:var(--shadow-sm);background:var(--neutral-0)" enctype="multipart/form-data">
         <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
         <div class="grid grid-2">
             <div class="form-group">
@@ -101,8 +101,19 @@ include __DIR__ . '/includes/header.php';
             <textarea name="description" class="form-control" rows="2"><?= e($editCat['description'] ?? '') ?></textarea>
         </div>
         <div class="form-group">
-            <label>Image URL</label>
-            <input type="text" name="image" class="form-control" placeholder="https://..." value="<?= e($editCat['image'] ?? '') ?>">
+            <label>Category Image</label>
+            <div class="image-upload-area" id="catImgPreview" style="<?= !empty($editCat['image']) ? '' : 'display:none' ?>">
+                <img src="<?= e($editCat['image'] ?? '') ?>" alt="Preview" id="catImgPreviewImg">
+            </div>
+            <div class="image-upload-buttons">
+                <label class="btn btn-outline btn-sm file-upload-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Upload from Device
+                    <input type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="previewImage(this)" style="display:none">
+                </label>
+            </div>
+            <input type="text" name="image_url" class="form-control" placeholder="Or paste an image URL (optional)" value="<?= e($editCat['image'] ?? '') ?>" style="margin-top:0.5rem">
+            <small class="text-muted">Upload from your device or paste a URL. Max 5MB.</small>
         </div>
         <div class="grid grid-2">
             <div class="form-group">

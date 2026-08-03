@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = (float)($_POST['price'] ?? 0);
     $salePrice = !empty($_POST['sale_price']) ? (float)$_POST['sale_price'] : null;
     $stock = (int)($_POST['stock'] ?? 0);
-    $image = trim($_POST['image'] ?? '');
+    $image = handle_image_upload('image_file', trim($_POST['image_url'] ?? ''));
     $description = trim($_POST['description'] ?? '');
     $isFeatured = isset($_POST['is_featured']) ? 1 : 0;
     $isActive = isset($_POST['is_active']) ? 1 : 0;
@@ -85,7 +85,7 @@ include __DIR__ . '/includes/header.php';
 <?php if ($error = flash('error')): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
 
 <?php if ($action === 'new' || ($action === 'edit' && $editProduct)): ?>
-    <form method="post" action="products.php?action=<?= $action === 'edit' ? 'edit&id='.$editId : 'create' ?>" class="form-card" style="max-width:none;box-shadow:var(--shadow-sm);background:var(--neutral-0)">
+    <form method="post" action="products.php?action=<?= $action === 'edit' ? 'edit&id='.$editId : 'create' ?>" class="form-card" style="max-width:none;box-shadow:var(--shadow-sm);background:var(--neutral-0)" enctype="multipart/form-data">
         <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
         <div class="grid grid-2">
             <div class="form-group">
@@ -120,9 +120,19 @@ include __DIR__ . '/includes/header.php';
             </div>
         </div>
         <div class="form-group">
-            <label>Image URL</label>
-            <input type="text" name="image" class="form-control" placeholder="https://..." value="<?= e($editProduct['image'] ?? '') ?>">
-            <small class="text-muted">Paste a direct image URL. Leave blank for placeholder.</small>
+            <label>Product Image</label>
+            <div class="image-upload-area" id="productImgPreview" style="<?= !empty($editProduct['image']) ? '' : 'display:none' ?>">
+                <img src="<?= e($editProduct['image'] ?? '') ?>" alt="Preview" id="productImgPreviewImg">
+            </div>
+            <div class="image-upload-buttons">
+                <label class="btn btn-outline btn-sm file-upload-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Upload from Device
+                    <input type="file" name="image_file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="previewImage(this)" style="display:none">
+                </label>
+            </div>
+            <input type="text" name="image_url" class="form-control" placeholder="Or paste an image URL (optional)" value="<?= e($editProduct['image'] ?? '') ?>" style="margin-top:0.5rem">
+            <small class="text-muted">Upload a photo from your device or paste a URL. Max 5MB (JPG, PNG, WEBP, GIF).</small>
         </div>
         <div class="flex gap-2" style="margin-bottom:1rem">
             <label><input type="checkbox" name="is_featured" <?= !empty($editProduct['is_featured']) ? 'checked' : '' ?>> Featured Product</label>
