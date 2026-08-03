@@ -148,7 +148,7 @@ CREATE INDEX idx_reviews_approved    ON reviews(is_approved);
 --  (Change the password immediately after first login)
 -- ----------------------------------------------------------
 INSERT INTO admin_users (username, password_hash, full_name)
-VALUES ('admin', '$2y$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Store Admin');
+VALUES ('admin', '$2y$12$Ut23DmeJrejef/DD5UnFPu1eVPR0V3J1slNoC3F579LWm3galPdxO', 'Store Admin');
 
 -- ----------------------------------------------------------
 --  Default settings
