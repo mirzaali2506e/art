@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/functions.php';
 require_admin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/functions.php';
 require_admin();
 
 $customers = db()->query("SELECT c.*, (SELECT COUNT(*) FROM orders WHERE customer_id = c.id) AS order_count FROM customers c ORDER BY c.created_at DESC")->fetchAll();
