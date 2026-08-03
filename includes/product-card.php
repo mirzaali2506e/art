@@ -4,15 +4,15 @@ $cat = db()->prepare('SELECT name, slug FROM categories WHERE id = ?');
 $cat->execute([$p['category_id']]);
 $catInfo = $cat->fetch();
 ?>
-<div class="product-card">
+<div class="product-card" onclick="window.location.href='product.php?slug=<?= e($p['slug']) ?>'">
     <div class="img-wrap">
         <div class="badges">
             <?php if (is_on_sale($p)): ?><span class="badge badge-sale">-<?= discount_percent($p) ?>%</span><?php endif; ?>
             <?php if ($p['is_featured']): ?><span class="badge badge-new">Featured</span><?php endif; ?>
             <?php if ($p['stock'] <= 0): ?><span class="badge badge-stock">Out of Stock</span><?php endif; ?>
         </div>
-        <img src="<?= e($p['image'] ?: placeholder_image($p['name'])) ?>" alt="<?= e($p['name']) ?>">
-        <div class="quick-add">
+        <img src="<?= e($p['image'] ?: placeholder_image($p['name'])) ?>" alt="<?= e($p['name']) ?>" loading="lazy">
+        <div class="quick-add" onclick="event.stopPropagation()">
             <form method="post" action="cart-action.php">
                 <input type="hidden" name="action" value="add">
                 <input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>">
@@ -23,7 +23,7 @@ $catInfo = $cat->fetch();
     </div>
     <div class="product-card-body">
         <?php if ($catInfo): ?><span class="cat"><?= e($catInfo['name']) ?></span><?php endif; ?>
-        <h3><a href="product.php?slug=<?= e($p['slug']) ?>" style="color:var(--neutral-900)"><?= e($p['name']) ?></a></h3>
+        <h3><?= e($p['name']) ?></h3>
         <div class="price-row">
             <span class="price"><?= money(current_price($p)) ?></span>
             <?php if (is_on_sale($p)): ?><span class="old-price"><?= money($p['price']) ?></span><?php endif; ?>

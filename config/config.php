@@ -10,6 +10,6 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
-define('SITE_NAME', 'BeadCraft Store');
+define('SITE_NAME', 'Tooba Art Collection');
 define('SITE_URL', 'http://localhost');
 define('CURRENCY', 'PKR');

@@ -34,7 +34,7 @@ include __DIR__ . '/includes/header.php';
             <div class="alert alert-error"><?= e($error) ?></div>
         <?php endif; ?>
 
-        <form method="post" action="order-place.php" class="grid" style="grid-template-columns:2fr 1fr;gap:2rem;align-items:start">
+        <form method="post" action="order-place.php" class="grid checkout-layout" style="gap:2rem;align-items:start">
             <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
             <div class="form-card" style="max-width:none;box-shadow:var(--shadow-sm)">
                 <h3 class="mb-3">Shipping Details</h3>

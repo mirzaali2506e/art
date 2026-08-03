@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login — BeadCraft</title>
+    <title>Admin Login — Tooba Art Collection</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem">
         <div class="form-card" style="width:100%;max-width:400px">
             <div class="text-center mb-4">
-                <div class="logo" style="justify-content:center;font-size:1.8rem">Bead<span>Craft</span></div>
+                <div class="logo" style="justify-content:center;font-size:1.8rem">Tooba<span> Art</span></div>
                 <p class="text-muted mt-1">Admin Panel</p>
             </div>
             <?php if (!empty($error)): ?>

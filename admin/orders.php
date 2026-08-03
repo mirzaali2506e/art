@@ -104,7 +104,7 @@ include __DIR__ . '/includes/header.php';
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Update Status</button>
-                <a href="https://wa.me/<?= e(preg_replace('/\D/', '', $viewOrder['customer_phone'])) ?>?text=<?= urlencode("Hi {$viewOrder['customer_name']}, your BeadCraft order #{$viewOrder['id']} is now {$viewOrder['status']}.") ?>" class="btn btn-accent" target="_blank">WhatsApp Customer</a>
+                <a href="https://wa.me/<?= e(preg_replace('/\D/', '', $viewOrder['customer_phone'])) ?>?text=<?= urlencode("Hi {$viewOrder['customer_name']}, your Tooba Art Collection order #{$viewOrder['id']} is now {$viewOrder['status']}.") ?>" class="btn btn-accent" target="_blank">WhatsApp Customer</a>
             </form>
         </div>
     </div>

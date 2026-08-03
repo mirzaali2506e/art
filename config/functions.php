@@ -219,6 +219,6 @@ function url($path) {
     return SITE_URL . '/' . ltrim($path, '/');
 }
 
-function placeholder_image($text = 'BeadCraft', $w = 600, $h = 600) {
+function placeholder_image($text = 'Tooba Art', $w = 600, $h = 600) {
     return 'https://placehold.co/' . $w . 'x' . $h . '/f5efe6/b08968?text=' . urlencode($text);
 }

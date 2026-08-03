@@ -82,7 +82,7 @@ include __DIR__ . '/includes/header.php';
             </div>
 
             <div class="mt-3">
-                <a href="https://wa.me/<?= e(preg_replace('/\D/', '', setting('whatsapp'))) ?>?text=<?= urlencode("Hi! I just placed order #$order_id on BeadCraft Store. Please confirm.") ?>" class="btn btn-accent btn-lg" target="_blank">Confirm on WhatsApp</a>
+                <a href="https://wa.me/<?= e(preg_replace('/\D/', '', setting('whatsapp'))) ?>?text=<?= urlencode("Hi! I just placed order #$order_id on Tooba Art Collection. Please confirm.") ?>" class="btn btn-accent btn-lg" target="_blank">Confirm on WhatsApp</a>
             </div>
             <p class="text-muted mt-2" style="font-size:0.85rem">Save your Order ID for tracking. You can view your orders in your account.</p>
 

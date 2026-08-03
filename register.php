@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = db()->prepare('INSERT INTO customers (name, email, phone, password_hash) VALUES (?, ?, ?, ?)');
         $stmt->execute([$name, $email, $phone, password_hash($password, PASSWORD_DEFAULT)]);
         $_SESSION['customer_id'] = (int)db()->lastInsertId();
-        flash('success', 'Welcome to BeadCraft! Your account has been created.');
+        flash('success', 'Welcome to Tooba Art Collection! Your account has been created.');
         redirect('account.php');
     }
 }
@@ -42,7 +42,7 @@ include __DIR__ . '/includes/header.php';
 <div class="section" style="padding-top:3rem;padding-bottom:3rem">
     <div class="form-card">
         <h1 class="text-center mb-3">Create Account</h1>
-        <p class="text-muted text-center mb-4">Join BeadCraft to track orders and shop faster.</p>
+        <p class="text-muted text-center mb-4">Join Tooba Art Collection to track orders and shop faster.</p>
 
         <?php if ($error = flash('error')): ?>
             <div class="alert alert-error"><?= e($error) ?></div>

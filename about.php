@@ -19,11 +19,11 @@ include __DIR__ . '/includes/header.php';
         </div>
 
         <div class="hero-image mb-4" style="aspect-ratio:16/9;max-height:400px">
-            <img src="<?= placeholder_image('BeadCraft Workshop', 800, 450) ?>" alt="Our Workshop">
+            <img src="<?= placeholder_image('Tooba Art Workshop', 800, 450) ?>" alt="Our Workshop">
         </div>
 
         <div style="font-size:1.1rem;line-height:1.8;color:var(--neutral-700)">
-            <p class="mb-3">Welcome to <strong>BeadCraft Store</strong> — where creativity meets quality. We started with a simple passion: to provide crafters, jewelry makers, and DIY enthusiasts with the finest beads, charms, and craft supplies at fair prices.</p>
+            <p class="mb-3">Welcome to <strong>Tooba Art Collection</strong> — where creativity meets quality. We started with a simple passion: to provide crafters, jewelry makers, and DIY enthusiasts with the finest beads, charms, and craft supplies at fair prices.</p>
 
             <p class="mb-3">What began as a small hobby has grown into a trusted online destination for thousands of makers across Pakistan. Whether you're crafting a single bracelet or stocking up for a creative business, we've got you covered with an ever-growing collection of premium products.</p>
 

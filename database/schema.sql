@@ -154,9 +154,9 @@ VALUES ('admin', '$2y$12$Ut23DmeJrejef/DD5UnFPu1eVPR0V3J1slNoC3F579LWm3galPdxO',
 --  Default settings
 -- ----------------------------------------------------------
 INSERT INTO settings (skey, sval) VALUES
-  ('site_name',     'BeadCraft Store'),
+  ('site_name',     'Tooba Art Collection'),
   ('whatsapp',      '03001234567'),
-  ('email',         'info@beadcraftstore.com'),
+  ('email',         'info@toobaartcollection.com'),
   ('address',       'Karachi, Pakistan'),
   ('shipping_fee',  '320'),
   ('currency',      'PKR'),

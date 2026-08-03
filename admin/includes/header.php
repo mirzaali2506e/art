@@ -7,7 +7,7 @@ require_admin();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e($pageTitle ?? 'Admin') ?> — BeadCraft Admin</title>
+    <title><?= e($pageTitle ?? 'Admin') ?> — Tooba Art Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@ require_admin();
 <body>
 <div class="admin-layout">
     <aside class="admin-sidebar">
-        <div class="logo">Bead<span>Craft</span></div>
+        <div class="logo">Tooba<span> Art</span></div>
         <nav class="admin-nav">
             <a href="dashboard.php" class="<?= ($activePage ?? '') === 'dashboard' ? 'active' : '' ?>">📊 Dashboard</a>
             <a href="products.php" class="<?= ($activePage ?? '') === 'products' ? 'active' : '' ?>">📦 Products</a>

@@ -12,7 +12,7 @@ $cats = get_categories();
     <div class="container">
         <div class="footer-grid">
             <div>
-                <h4>BeadCraft Store</h4>
+                <h4>Tooba Art Collection</h4>
                 <p style="color:var(--primary-300);font-size:0.9rem;line-height:1.7;margin-bottom:1rem;max-width:320px">
                     Your one-stop shop for premium beads, charms, bracelet kits, and craft supplies. Quality you can trust, delivered to your door.
                 </p>

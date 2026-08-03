@@ -31,7 +31,7 @@ $whatsapp   = setting('whatsapp');
 
 <header class="header">
     <div class="container header-inner">
-        <a href="index.php" class="logo">Bead<span>Craft</span></a>
+        <a href="index.php" class="logo">Tooba<span> Art</span></a>
         <nav class="nav" id="mainNav">
             <a href="index.php" class="<?= ($activePage ?? '') === 'home' ? 'active' : '' ?>">Home</a>
             <div class="nav-dropdown">

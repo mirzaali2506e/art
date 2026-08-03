@@ -30,7 +30,7 @@ include __DIR__ . '/includes/header.php';
                 <a href="collections.php" class="btn btn-primary mt-3">Start Shopping</a>
             </div>
         <?php else: ?>
-            <div class="grid" style="grid-template-columns:2fr 1fr;gap:2rem;align-items:start">
+            <div class="grid cart-layout" style="gap:2rem;align-items:start">
                 <div>
                     <table class="cart-table">
                         <thead>
@@ -48,7 +48,7 @@ include __DIR__ . '/includes/header.php';
                                     <td>
                                         <div class="cart-product">
                                             <img src="<?= e($item['image'] ?: placeholder_image($item['name'], 100, 100)) ?>" alt="<?= e($item['name']) ?>">
-                                            <a href="product.php?slug=<?= e(strtolower(str_replace(' ', '-', $item['name']))) ?>"><?= e($item['name']) ?></a>
+                                            <a href="collections.php"><?= e($item['name']) ?></a>
                                         </div>
                                     </td>
                                     <td class="hide-mobile"><?= money($item['price']) ?></td>

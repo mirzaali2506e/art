@@ -38,7 +38,7 @@ include __DIR__ . '/includes/header.php';
             </div>
         </div>
         <div class="hero-image animate-in">
-            <img src="<?= placeholder_image('Beautiful Beads Collection', 800, 600) ?>" alt="BeadCraft collection">
+            <img src="<?= placeholder_image('Beautiful Beads Collection', 800, 600) ?>" alt="Tooba Art Collection">
         </div>
     </div>
 </section>
@@ -175,7 +175,7 @@ include __DIR__ . '/includes/header.php';
     <div class="container">
         <h2 style="color:var(--neutral-0)">Ready to Start Crafting?</h2>
         <p style="color:var(--primary-200);margin:1rem 0 2rem;max-width:500px;margin-left:auto;margin-right:auto">
-            Join thousands of happy makers who trust BeadCraft for their creative projects.
+            Join thousands of happy makers who trust Tooba Art Collection for their creative projects.
         </p>
         <a href="collections.php" class="btn btn-accent btn-lg">Browse All Products</a>
     </div>
