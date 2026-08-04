@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = db()->prepare('INSERT INTO customers (name, email, phone, password_hash) VALUES (?, ?, ?, ?)');
         $stmt->execute([$name, $email, $phone, password_hash($password, PASSWORD_DEFAULT)]);
         $_SESSION['customer_id'] = (int)db()->lastInsertId();
+        merge_session_cart_to_db();
         flash('success', 'Welcome to Tooba Art Collection! Your account has been created.');
         redirect('account.php');
     }

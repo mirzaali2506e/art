@@ -13,7 +13,7 @@ $catInfo = $cat->fetch();
         </div>
         <img src="<?= e($p['image'] ?: placeholder_image($p['name'])) ?>" alt="<?= e($p['name']) ?>" loading="lazy">
         <div class="quick-add" onclick="event.stopPropagation()">
-            <form method="post" action="cart-action.php">
+            <form method="post" action="cart-action.php" data-ajax-cart>
                 <input type="hidden" name="action" value="add">
                 <input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>">
                 <input type="hidden" name="csrf" value="<?= csrf_token() ?>">

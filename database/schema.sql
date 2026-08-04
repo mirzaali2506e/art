@@ -121,6 +121,22 @@ CREATE TABLE IF NOT EXISTS reviews (
 ) ENGINE=InnoDB;
 
 -- ----------------------------------------------------------
+--  Cart items (persistent cart per logged-in customer)
+-- ----------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cart_items (
+  id           INT AUTO_INCREMENT PRIMARY KEY,
+  customer_id  INT NOT NULL,
+  product_id   INT NOT NULL,
+  product_name VARCHAR(255) NOT NULL,
+  price        DECIMAL(10,2) NOT NULL,
+  image        VARCHAR(500),
+  quantity     INT NOT NULL DEFAULT 1,
+  created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ----------------------------------------------------------
 --  Site settings (key-value store)
 -- ----------------------------------------------------------
 CREATE TABLE IF NOT EXISTS settings (

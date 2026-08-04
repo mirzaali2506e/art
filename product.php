@@ -69,7 +69,7 @@ include __DIR__ . '/includes/header.php';
                 </p>
 
                 <?php if ($product['stock'] > 0): ?>
-                    <form method="post" action="cart-action.php" class="product-buy-form">
+                    <form method="post" action="cart-action.php" class="product-buy-form" data-ajax-cart>
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
                         <input type="hidden" name="csrf" value="<?= csrf_token() ?>">

@@ -5,6 +5,14 @@
 
 require_once __DIR__ . '/database.php';
 
+$sessionLifetime = 60 * 60 * 24 * 30; // 30 days
+session_set_cookie_params([
+    'lifetime' => $sessionLifetime,
+    'path'     => '/',
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+ini_set('session.gc_maxlifetime', $sessionLifetime);
 session_start();
 
 function redirect($path) {
@@ -111,6 +119,21 @@ function get_all_reviews() {
 }
 
 function get_cart() {
+    if (is_logged_in()) {
+        $stmt = db()->prepare('SELECT * FROM cart_items WHERE customer_id = ?');
+        $stmt->execute([$_SESSION['customer_id']]);
+        $cart = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $cart[$row['product_id']] = [
+                'id'       => $row['product_id'],
+                'name'     => $row['product_name'],
+                'price'    => $row['price'],
+                'image'    => $row['image'],
+                'quantity' => $row['quantity'],
+            ];
+        }
+        return $cart;
+    }
     return $_SESSION['cart'] ?? [];
 }
 
@@ -135,42 +158,94 @@ function add_to_cart($product_id, $quantity = 1) {
     if (!$product) return false;
 
     $price = current_price($product);
-    $cart = get_cart();
 
-    if (isset($cart[$product_id])) {
-        $cart[$product_id]['quantity'] += $quantity;
+    if (is_logged_in()) {
+        $check = db()->prepare('SELECT id, quantity FROM cart_items WHERE customer_id = ? AND product_id = ?');
+        $check->execute([$_SESSION['customer_id'], $product_id]);
+        $existing = $check->fetch();
+        if ($existing) {
+            db()->prepare('UPDATE cart_items SET quantity = ?, price = ?, image = ? WHERE id = ?')
+                ->execute([$existing['quantity'] + $quantity, $price, $product['image'], $existing['id']]);
+        } else {
+            db()->prepare('INSERT INTO cart_items (customer_id, product_id, product_name, price, image, quantity) VALUES (?, ?, ?, ?, ?, ?)')
+                ->execute([$_SESSION['customer_id'], $product_id, $product['name'], $price, $product['image'], $quantity]);
+        }
     } else {
-        $cart[$product_id] = [
-            'id'       => $product['id'],
-            'name'     => $product['name'],
-            'price'    => $price,
-            'image'    => $product['image'],
-            'quantity' => $quantity,
-        ];
+        $cart = get_cart();
+        if (isset($cart[$product_id])) {
+            $cart[$product_id]['quantity'] += $quantity;
+        } else {
+            $cart[$product_id] = [
+                'id'       => $product['id'],
+                'name'     => $product['name'],
+                'price'    => $price,
+                'image'    => $product['image'],
+                'quantity' => $quantity,
+            ];
+        }
+        $_SESSION['cart'] = $cart;
     }
-    $_SESSION['cart'] = $cart;
     return true;
 }
 
 function update_cart_qty($product_id, $quantity) {
-    $cart = get_cart();
-    if (isset($cart[$product_id])) {
+    if (is_logged_in()) {
         if ($quantity <= 0) {
-            unset($cart[$product_id]);
+            db()->prepare('DELETE FROM cart_items WHERE customer_id = ? AND product_id = ?')
+                ->execute([$_SESSION['customer_id'], $product_id]);
         } else {
-            $cart[$product_id]['quantity'] = $quantity;
+            db()->prepare('UPDATE cart_items SET quantity = ? WHERE customer_id = ? AND product_id = ?')
+                ->execute([$quantity, $_SESSION['customer_id'], $product_id]);
         }
+    } else {
+        $cart = get_cart();
+        if (isset($cart[$product_id])) {
+            if ($quantity <= 0) {
+                unset($cart[$product_id]);
+            } else {
+                $cart[$product_id]['quantity'] = $quantity;
+            }
+        }
+        $_SESSION['cart'] = $cart;
     }
-    $_SESSION['cart'] = $cart;
 }
 
 function remove_from_cart($product_id) {
-    $cart = get_cart();
-    unset($cart[$product_id]);
-    $_SESSION['cart'] = $cart;
+    if (is_logged_in()) {
+        db()->prepare('DELETE FROM cart_items WHERE customer_id = ? AND product_id = ?')
+            ->execute([$_SESSION['customer_id'], $product_id]);
+    } else {
+        $cart = get_cart();
+        unset($cart[$product_id]);
+        $_SESSION['cart'] = $cart;
+    }
 }
 
 function clear_cart() {
+    if (is_logged_in()) {
+        db()->prepare('DELETE FROM cart_items WHERE customer_id = ?')
+            ->execute([$_SESSION['customer_id']]);
+    }
+    unset($_SESSION['cart']);
+}
+
+function merge_session_cart_to_db() {
+    if (!is_logged_in()) return;
+    $sessionCart = $_SESSION['cart'] ?? [];
+    if (empty($sessionCart)) return;
+
+    foreach ($sessionCart as $pid => $item) {
+        $check = db()->prepare('SELECT id, quantity FROM cart_items WHERE customer_id = ? AND product_id = ?');
+        $check->execute([$_SESSION['customer_id'], $pid]);
+        $existing = $check->fetch();
+        if ($existing) {
+            db()->prepare('UPDATE cart_items SET quantity = ? WHERE id = ?')
+                ->execute([$existing['quantity'] + $item['quantity'], $existing['id']]);
+        } else {
+            db()->prepare('INSERT INTO cart_items (customer_id, product_id, product_name, price, image, quantity) VALUES (?, ?, ?, ?, ?, ?)')
+                ->execute([$_SESSION['customer_id'], $pid, $item['name'], $item['price'], $item['image'], $item['quantity']]);
+        }
+    }
     unset($_SESSION['cart']);
 }
 

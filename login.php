@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($customer && password_verify($password, $customer['password_hash'])) {
         $_SESSION['customer_id'] = $customer['id'];
+        merge_session_cart_to_db();
         redirect('account.php');
     } else {
         flash('error', 'Invalid email or password.');

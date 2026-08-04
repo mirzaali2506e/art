@@ -60,6 +60,50 @@ document.querySelectorAll('#mainNav a').forEach(a => {
     });
 });
 
+// AJAX add-to-cart (no page reload)
+document.querySelectorAll('form[data-ajax-cart]').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var btn = form.querySelector('[type="submit"]');
+        var originalText = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.dataset.originalHtml = originalText; btn.innerHTML = 'Adding...'; }
+
+        var formData = new FormData(form);
+        formData.append('ajax', '1');
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                // Update cart badge
+                var badges = document.querySelectorAll('.cart-badge, .cart-count');
+                badges.forEach(function(b) { b.textContent = data.cart_count; });
+                // Show toast
+                var toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = data.message;
+                document.body.appendChild(toast);
+                requestAnimationFrame(function() { toast.classList.add('show'); });
+                setTimeout(function() {
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity 0.3s';
+                    setTimeout(function() { toast.remove(); }, 300);
+                }, 2500);
+            } else {
+                alert(data.message || 'Could not add to cart.');
+            }
+        })
+        .catch(function() { alert('Network error. Please try again.'); })
+        .finally(function() {
+            if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
+        });
+    });
+});
+
 // Toast notifications for flash messages
 (function() {
     var alerts = document.querySelectorAll('.alert-success, .alert-error');
