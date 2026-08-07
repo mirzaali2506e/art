@@ -23,36 +23,56 @@ include __DIR__ . '/includes/header.php';
     <span class="text-muted">Welcome back, <?= e($_SESSION['admin_name'] ?? 'Admin') ?></span>
 </div>
 
-<div class="grid grid-3" style="margin-bottom:2rem">
-    <div class="stat-card">
-        <div class="label">Total Revenue</div>
-        <div class="value"><?= money($stats['revenue']) ?></div>
+<div class="admin-stats-grid">
+    <div class="admin-stat-card admin-stat-revenue">
+        <div class="admin-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="admin-stat-label">Total Revenue</div>
+        <div class="admin-stat-value"><?= money($stats['revenue']) ?></div>
     </div>
-    <div class="stat-card">
-        <div class="label">Total Orders</div>
-        <div class="value"><?= $stats['orders'] ?></div>
+    <div class="admin-stat-card admin-stat-orders">
+        <div class="admin-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </div>
+        <div class="admin-stat-label">Total Orders</div>
+        <div class="admin-stat-value"><?= $stats['orders'] ?></div>
     </div>
-    <div class="stat-card">
-        <div class="label">Pending Orders</div>
-        <div class="value" style="color:var(--warning-500)"><?= $stats['pending'] ?></div>
+    <div class="admin-stat-card admin-stat-pending">
+        <div class="admin-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="admin-stat-label">Pending Orders</div>
+        <div class="admin-stat-value"><?= $stats['pending'] ?></div>
     </div>
-    <div class="stat-card">
-        <div class="label">Products</div>
-        <div class="value"><?= $stats['products'] ?></div>
+    <div class="admin-stat-card admin-stat-products">
+        <div class="admin-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <div class="admin-stat-label">Products</div>
+        <div class="admin-stat-value"><?= $stats['products'] ?></div>
     </div>
-    <div class="stat-card">
-        <div class="label">Customers</div>
-        <div class="value"><?= $stats['customers'] ?></div>
+    <div class="admin-stat-card admin-stat-customers">
+        <div class="admin-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="admin-stat-label">Customers</div>
+        <div class="admin-stat-value"><?= $stats['customers'] ?></div>
     </div>
-    <div class="stat-card">
-        <div class="label">Pending Reviews</div>
-        <div class="value" style="color:var(--warning-500)"><?= $stats['reviews'] ?></div>
+    <div class="admin-stat-card admin-stat-reviews">
+        <div class="admin-stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="admin-stat-label">Pending Reviews</div>
+        <div class="admin-stat-value"><?= $stats['reviews'] ?></div>
     </div>
 </div>
 
-<h2 class="mb-3">Recent Orders</h2>
+<h2 class="mb-3 mt-4">Recent Orders</h2>
 <?php if (empty($recentOrders)): ?>
-    <p class="text-muted">No orders yet.</p>
+    <div class="empty-state">
+        <p>No orders yet. Orders will appear here once customers start placing them.</p>
+    </div>
 <?php else: ?>
     <table class="admin-table">
         <thead>
@@ -61,10 +81,10 @@ include __DIR__ . '/includes/header.php';
         <tbody>
             <?php foreach ($recentOrders as $o): ?>
                 <tr>
-                    <td>#<?= $o['id'] ?></td>
+                    <td><strong>#<?= (int)$o['id'] ?></strong></td>
                     <td><?= e($o['customer_name']) ?><br><small class="text-muted"><?= e($o['customer_phone']) ?></small></td>
                     <td><?= money($o['total']) ?></td>
-                    <td><span class="badge <?= $o['status'] == 'delivered' ? 'badge-new' : ($o['status'] == 'cancelled' ? 'badge-sale' : 'badge-stock') ?>"><?= ucfirst($o['status']) ?></span></td>
+                    <td><span class="badge <?= $o['status'] == 'delivered' ? 'badge-new' : ($o['status'] == 'cancelled' ? 'badge-sale' : 'badge-featured') ?>"><?= ucfirst($o['status']) ?></span></td>
                     <td><?= date('M j, Y', strtotime($o['created_at'])) ?></td>
                     <td><a href="orders.php?action=view&id=<?= $o['id'] ?>" class="btn btn-ghost btn-sm">View</a></td>
                 </tr>
