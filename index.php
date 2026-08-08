@@ -15,11 +15,12 @@ include __DIR__ . '/includes/header.php';
 <!-- Hero -->
 <section class="hero">
     <div class="container hero-grid">
-        <div class="animate-in">
-            <h1>Craft Your <span class="accent">Story</span> in Beads</h1>
-            <p>Premium beads, charms, bracelet kits, and craft supplies — handpicked for makers who care about quality. Build beautiful bracelets that tell your story.</p>
+        <div class="hero-content animate-in">
+            <div class="hero-eyebrow">Handpicked for Makers</div>
+            <h1>Every Bead Tells a <span class="accent">Story</span></h1>
+            <p>From sparkling crystals to handcrafted charms — discover premium supplies that turn your creative vision into wearable art. Quality you can feel, beauty you can share.</p>
             <div class="hero-actions">
-                <a href="collections.php" class="btn btn-primary btn-lg">Shop Collections</a>
+                <a href="collections.php" class="btn btn-primary btn-lg">Explore Collections</a>
                 <a href="about.php" class="btn btn-outline btn-lg">Our Story</a>
             </div>
             <div class="hero-stats">
@@ -29,7 +30,7 @@ include __DIR__ . '/includes/header.php';
                 </div>
                 <div class="hero-stat">
                     <div class="num"><?= (int)$avgRating['cnt'] ?>+</div>
-                    <div class="label">Happy Customers</div>
+                    <div class="label">Happy Makers</div>
                 </div>
                 <div class="hero-stat">
                     <div class="num"><?= number_format($avgRating['avg'], 1) ?>★</div>
@@ -37,8 +38,28 @@ include __DIR__ . '/includes/header.php';
                 </div>
             </div>
         </div>
-        <div class="hero-image animate-in">
-            <img src="https://images.pexels.com/photos/1331705/pexels-photo-1331705.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Tooba Art Collection">
+        <div class="hero-image-wrap animate-in">
+            <div class="hero-image">
+                <img src="https://images.pexels.com/photos/38806964/pexels-photo-38806964.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Colorful glass beads for jewelry making">
+            </div>
+            <div class="hero-badge">
+                <div class="hero-badge-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <div class="hero-badge-text">
+                    <div class="title">Premium Quality</div>
+                    <div class="sub">Hand-checked every order</div>
+                </div>
+            </div>
+            <div class="hero-badge hero-badge-2">
+                <div class="hero-badge-icon hero-badge-icon-2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                </div>
+                <div class="hero-badge-text">
+                    <div class="title">Cash on Delivery</div>
+                    <div class="sub">Pay when it arrives</div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

@@ -57,7 +57,7 @@ $pageSlug   = $activePage ?? '';
             <a href="index.php" class="<?= $pageSlug === 'home' ? 'active' : '' ?>">Home</a>
             <a href="collections.php" class="<?= $pageSlug === 'collections' ? 'active' : '' ?>">Collections</a>
             <?php if (!empty($categories)): ?>
-            <div class="nav-dropdown">
+            <div class="nav-dropdown nav-desktop-only">
                 <button class="nav-dropdown-trigger <?= $pageSlug === 'category' ? 'active' : '' ?>" type="button">
                     Categories
                     <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-left:0.3rem"><path d="M1 1l5 5 5-5"/></svg>
@@ -90,9 +90,6 @@ $pageSlug   = $activePage ?? '';
             </div>
         </nav>
         <div class="header-actions">
-            <button class="icon-btn" onclick="document.getElementById('searchOverlay').classList.add('open')" aria-label="Search">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </button>
             <a href="cart.php" class="icon-btn" aria-label="Cart">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                 <?php if ($cartCount > 0): ?><span class="cart-count"><?= $cartCount ?></span><?php endif; ?>
@@ -103,18 +100,5 @@ $pageSlug   = $activePage ?? '';
         </div>
     </div>
 </header>
-
-<!-- Search Overlay -->
-<div class="search-overlay" id="searchOverlay">
-    <div class="search-overlay-inner">
-        <form action="collections.php" method="get" class="search-form">
-            <input type="text" name="q" placeholder="Search beads, charms, kits..." autofocus>
-            <button type="submit" class="btn btn-gold">Search</button>
-            <button type="button" class="search-close" onclick="document.getElementById('searchOverlay').classList.remove('open')" aria-label="Close search">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </form>
-    </div>
-</div>
 
 <main>
