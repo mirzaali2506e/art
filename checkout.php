@@ -5,7 +5,8 @@ $cart = get_cart();
 
 // Buy now support
 if (isset($_GET['buy_now']) && !empty($_GET['buy_now'])) {
-    add_to_cart((int)$_GET['buy_now'], 1);
+    $buyQty = max(1, (int)($_GET['qty'] ?? 1));
+    add_to_cart((int)$_GET['buy_now'], $buyQty);
     $cart = get_cart();
 }
 

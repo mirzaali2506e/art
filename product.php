@@ -79,7 +79,7 @@ include __DIR__ . '/includes/header.php';
                         </div>
                         <div class="product-buy-buttons">
                             <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
-                            <a href="checkout.php?buy_now=<?= (int)$product['id'] ?>" class="btn btn-accent btn-lg">Buy Now</a>
+                            <button type="button" class="btn btn-accent btn-lg" onclick="var q=this.form.querySelector('input[name=quantity]').value;window.location.href='checkout.php?buy_now=<?= (int)$product['id'] ?>&qty='+encodeURIComponent(q)">Buy Now</button>
                         </div>
                     </form>
                 <?php endif; ?>
