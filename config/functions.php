@@ -28,8 +28,12 @@ function setting($key, $default = '') {
     static $cache = null;
     if ($cache === null) {
         $cache = [];
-        $rows = db()->query('SELECT skey, sval FROM settings')->fetchAll();
-        foreach ($rows as $row) $cache[$row['skey']] = $row['sval'];
+        try {
+            $rows = db()->query('SELECT skey, sval FROM settings')->fetchAll();
+            foreach ($rows as $row) $cache[$row['skey']] = $row['sval'];
+        } catch (Throwable $e) {
+            error_log('settings load failed: ' . $e->getMessage());
+        }
     }
     return $cache[$key] ?? $default;
 }
@@ -62,77 +66,96 @@ function slugify($text) {
 }
 
 function get_categories() {
-    return db()->query('SELECT * FROM categories ORDER BY sort_order, name')->fetchAll();
+    try { return db()->query('SELECT * FROM categories ORDER BY sort_order, name')->fetchAll(); }
+    catch (Throwable $e) { return []; }
 }
 
 function get_featured_categories() {
-    return db()->query('SELECT * FROM categories WHERE is_featured = 1 ORDER BY sort_order, name')->fetchAll();
+    try { return db()->query('SELECT * FROM categories WHERE is_featured = 1 ORDER BY sort_order, name')->fetchAll(); }
+    catch (Throwable $e) { return []; }
 }
 
 function get_featured_products($limit = 8) {
-    $stmt = db()->prepare('SELECT * FROM products WHERE is_featured = 1 AND is_active = 1 ORDER BY created_at DESC LIMIT ?');
-    $stmt->bindValue(1, (int)$limit, PDO::PARAM_INT);
-    $stmt->execute();
-    return $stmt->fetchAll();
+    try {
+        $stmt = db()->prepare('SELECT * FROM products WHERE is_featured = 1 AND is_active = 1 ORDER BY created_at DESC LIMIT ?');
+        $stmt->bindValue(1, (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    } catch (Throwable $e) { return []; }
 }
 
 function get_latest_products($limit = 8) {
-    $stmt = db()->prepare('SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT ?');
-    $stmt->bindValue(1, (int)$limit, PDO::PARAM_INT);
-    $stmt->execute();
-    return $stmt->fetchAll();
+    try {
+        $stmt = db()->prepare('SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT ?');
+        $stmt->bindValue(1, (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    } catch (Throwable $e) { return []; }
 }
 
 function get_products_by_category($category_id) {
-    $stmt = db()->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY created_at DESC');
-    $stmt->execute([$category_id]);
-    return $stmt->fetchAll();
+    try {
+        $stmt = db()->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY created_at DESC');
+        $stmt->execute([$category_id]);
+        return $stmt->fetchAll();
+    } catch (Throwable $e) { return []; }
 }
 
 function get_product($slug) {
-    $stmt = db()->prepare('SELECT * FROM products WHERE slug = ? LIMIT 1');
-    $stmt->execute([$slug]);
-    return $stmt->fetch();
+    try {
+        $stmt = db()->prepare('SELECT * FROM products WHERE slug = ? LIMIT 1');
+        $stmt->execute([$slug]);
+        return $stmt->fetch();
+    } catch (Throwable $e) { return false; }
 }
 
 function get_category($slug) {
-    $stmt = db()->prepare('SELECT * FROM categories WHERE slug = ? LIMIT 1');
-    $stmt->execute([$slug]);
-    return $stmt->fetch();
+    try {
+        $stmt = db()->prepare('SELECT * FROM categories WHERE slug = ? LIMIT 1');
+        $stmt->execute([$slug]);
+        return $stmt->fetch();
+    } catch (Throwable $e) { return false; }
 }
 
 function get_product_reviews($product_id) {
-    $stmt = db()->prepare('SELECT * FROM reviews WHERE product_id = ? AND is_approved = 1 ORDER BY created_at DESC');
-    $stmt->execute([$product_id]);
-    return $stmt->fetchAll();
+    try {
+        $stmt = db()->prepare('SELECT * FROM reviews WHERE product_id = ? AND is_approved = 1 ORDER BY created_at DESC');
+        $stmt->execute([$product_id]);
+        return $stmt->fetchAll();
+    } catch (Throwable $e) { return []; }
 }
 
 function get_avg_rating($product_id) {
-    $stmt = db()->prepare('SELECT AVG(rating) AS avg, COUNT(*) AS cnt FROM reviews WHERE product_id = ? AND is_approved = 1');
-    $stmt->execute([$product_id]);
-    $row = $stmt->fetch();
-    return ['avg' => round($row['avg'] ?? 0, 2), 'count' => (int)($row['cnt'] ?? 0)];
+    try {
+        $stmt = db()->prepare('SELECT AVG(rating) AS avg, COUNT(*) AS cnt FROM reviews WHERE product_id = ? AND is_approved = 1');
+        $stmt->execute([$product_id]);
+        $row = $stmt->fetch();
+        return ['avg' => round($row['avg'] ?? 0, 2), 'count' => (int)($row['cnt'] ?? 0)];
+    } catch (Throwable $e) { return ['avg' => 0, 'count' => 0]; }
 }
 
 function get_all_reviews() {
-    return db()->query('SELECT r.*, p.name AS product_name FROM reviews r JOIN products p ON r.product_id = p.id ORDER BY r.created_at DESC')->fetchAll();
+    try { return db()->query('SELECT r.*, p.name AS product_name FROM reviews r JOIN products p ON r.product_id = p.id ORDER BY r.created_at DESC')->fetchAll(); }
+    catch (Throwable $e) { return []; }
 }
 
 function get_cart() {
     if (is_logged_in()) {
-        $stmt = db()->prepare('SELECT * FROM cart_items WHERE customer_id = ?');
-        $stmt->execute([$_SESSION['customer_id']]);
-        $cart = [];
-        foreach ($stmt->fetchAll() as $row) {
-            $cart[$row['product_id']] = [
-                'id'       => $row['product_id'],
-                'name'     => $row['product_name'],
-                'price'    => $row['price'],
-                'image'    => $row['image'],
-                'quantity' => $row['quantity'],
-            ];
-        }
-        return $cart;
+        try {
+            $stmt = db()->prepare('SELECT * FROM cart_items WHERE customer_id = ?');
+            $stmt->execute([$_SESSION['customer_id']]);
+            $cart = [];
+            foreach ($stmt->fetchAll() as $row) {
+                $cart[$row['product_id']] = [
+                    'id'       => $row['product_id'],
+                    'name'     => $row['product_name'],
+                    'price'    => $row['price'],
+                    'image'    => $row['image'],
+                    'quantity' => $row['quantity'],
+                ];
+            }
+            return $cart;
+        } catch (Throwable $e) { return []; }
     }
     return $_SESSION['cart'] ?? [];
 }
@@ -255,9 +278,11 @@ function is_logged_in() {
 
 function current_customer() {
     if (!is_logged_in()) return null;
-    $stmt = db()->prepare('SELECT * FROM customers WHERE id = ?');
-    $stmt->execute([$_SESSION['customer_id']]);
-    return $stmt->fetch();
+    try {
+        $stmt = db()->prepare('SELECT * FROM customers WHERE id = ?');
+        $stmt->execute([$_SESSION['customer_id']]);
+        return $stmt->fetch();
+    } catch (Throwable $e) { return null; }
 }
 
 function is_admin() {

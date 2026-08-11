@@ -4,8 +4,8 @@ require_once __DIR__ . '/config/functions.php';
 $featuredCats = get_featured_categories();
 $featuredProducts = get_featured_products(8);
 $latestProducts = get_latest_products(4);
-$reviews = db()->query("SELECT r.*, p.name AS product_name FROM reviews r JOIN products p ON r.product_id = p.id WHERE r.is_approved = 1 ORDER BY r.created_at DESC LIMIT 3")->fetchAll();
-$avgRating = db()->query("SELECT AVG(rating) AS avg, COUNT(*) AS cnt FROM reviews WHERE is_approved = 1")->fetch();
+try { $reviews = db()->query("SELECT r.*, p.name AS product_name FROM reviews r JOIN products p ON r.product_id = p.id WHERE r.is_approved = 1 ORDER BY r.created_at DESC LIMIT 3")->fetchAll(); } catch (Throwable $e) { $reviews = []; }
+try { $avgRating = db()->query("SELECT AVG(rating) AS avg, COUNT(*) AS cnt FROM reviews WHERE is_approved = 1")->fetch(); } catch (Throwable $e) { $avgRating = ['avg' => 0, 'cnt' => 0]; }
 
 $pageTitle = 'Home';
 $activePage = 'home';
@@ -79,7 +79,7 @@ include __DIR__ . '/includes/header.php';
                     <img src="<?= e($cat['image'] ?: placeholder_image($cat['name'])) ?>" alt="<?= e($cat['name']) ?>">
                     <div class="cat-card-body">
                         <h3><?= e($cat['name']) ?></h3>
-                        <span class="count"><?= db()->query('SELECT COUNT(*) FROM products WHERE category_id='.(int)$cat['id'].' AND is_active=1')->fetchColumn() ?> products</span>
+                        <span class="count"><?php try { echo db()->query('SELECT COUNT(*) FROM products WHERE category_id='.(int)$cat['id'].' AND is_active=1')->fetchColumn(); } catch (Throwable $e) { echo '0'; } ?> products</span>
                     </div>
                 </a>
             <?php endforeach; ?>

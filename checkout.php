@@ -1,21 +1,7 @@
 <?php
 require_once __DIR__ . '/config/functions.php';
 
-$cart = get_cart();
-
-// Buy now support
-if (isset($_GET['buy_now']) && !empty($_GET['buy_now'])) {
-    $buyQty = max(1, (int)($_GET['qty'] ?? 1));
-    add_to_cart((int)$_GET['buy_now'], $buyQty);
-    $cart = get_cart();
-}
-
-if (empty($cart)) redirect('cart.php');
-
 $customer = current_customer();
-$subtotal = cart_subtotal();
-$shipping = $subtotal >= 5000 ? 0 : (float)setting('shipping_fee', 320);
-$total = $subtotal + $shipping;
 
 $pageTitle = 'Checkout';
 include __DIR__ . '/includes/header.php';
@@ -35,8 +21,16 @@ include __DIR__ . '/includes/header.php';
             <div class="alert alert-error"><?= e($error) ?></div>
         <?php endif; ?>
 
-        <form method="post" action="order-place.php" class="grid checkout-layout" style="gap:2rem;align-items:start">
+        <div id="checkout-empty" class="empty-state" style="display:none">
+            <div class="icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Add some products before checking out.</p>
+            <a href="collections.php" class="btn btn-primary mt-3">Start Shopping</a>
+        </div>
+
+        <form id="checkout-form" method="post" action="order-place.php" class="grid checkout-layout" style="gap:2rem;align-items:start;display:none">
             <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+            <input type="hidden" name="cart_json" id="cart-json" value="">
             <div class="form-card" style="max-width:none;box-shadow:var(--shadow-sm)">
                 <h3 class="mb-3">Shipping Details</h3>
                 <div class="grid grid-2">
@@ -74,20 +68,47 @@ include __DIR__ . '/includes/header.php';
 
             <div class="order-summary" style="position:sticky;top:100px">
                 <h3>Your Order</h3>
-                <?php foreach ($cart as $item): ?>
-                    <div class="summary-row">
-                        <span><?= e($item['name']) ?> × <?= $item['quantity'] ?></span>
-                        <span><?= money($item['price'] * $item['quantity']) ?></span>
-                    </div>
-                <?php endforeach; ?>
-                <div class="summary-row"><span>Subtotal</span><span><?= money($subtotal) ?></span></div>
-                <div class="summary-row"><span>Shipping</span><span><?= $shipping == 0 ? 'Free' : money($shipping) ?></span></div>
-                <div class="summary-row total"><span>Total</span><span><?= money($total) ?></span></div>
+                <div id="checkout-items"></div>
+                <div class="summary-row"><span>Subtotal</span><span id="checkout-subtotal">PKR 0</span></div>
+                <div class="summary-row"><span>Shipping</span><span id="checkout-shipping">PKR 0</span></div>
+                <div class="summary-row total"><span>Total</span><span id="checkout-total">PKR 0</span></div>
                 <button type="submit" class="btn btn-primary btn-block btn-lg mt-2">Complete Order</button>
                 <p class="text-muted text-center mt-2" style="font-size:0.85rem">By placing this order you agree to our terms.</p>
             </div>
         </form>
     </div>
 </section>
+
+<script>
+var CART_KEY = 'tooba_cart';
+function getCart() {
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || '{}'); }
+    catch(e) { return {}; }
+}
+function fmt(n) { return 'PKR ' + Math.round(n).toLocaleString(); }
+
+var cart = getCart();
+var items = Object.values(cart);
+var empty = items.length === 0;
+
+document.getElementById('checkout-empty').style.display = empty ? '' : 'none';
+document.getElementById('checkout-form').style.display = empty ? 'none' : '';
+
+if (!empty) {
+    var itemsHtml = '';
+    var subtotal = 0;
+    items.forEach(function(item) {
+        var lineTotal = item.price * item.quantity;
+        subtotal += lineTotal;
+        itemsHtml += '<div class="summary-row"><span>' + (item.name || '') + ' × ' + item.quantity + '</span><span>' + fmt(lineTotal) + '</span></div>';
+    });
+    document.getElementById('checkout-items').innerHTML = itemsHtml;
+    var shipping = subtotal >= 5000 ? 0 : 320;
+    document.getElementById('checkout-subtotal').textContent = fmt(subtotal);
+    document.getElementById('checkout-shipping').textContent = shipping === 0 ? 'Free' : fmt(shipping);
+    document.getElementById('checkout-total').textContent = fmt(subtotal + shipping);
+    document.getElementById('cart-json').value = JSON.stringify(items);
+}
+</script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

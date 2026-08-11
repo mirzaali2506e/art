@@ -60,69 +60,102 @@ document.querySelectorAll('#mainNav a').forEach(a => {
     });
 });
 
-// AJAX add-to-cart (no page reload)
+// Client-side cart using localStorage (no server needed)
+var CART_KEY = 'tooba_cart';
+function getCart() {
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || '{}'); }
+    catch(e) { return {}; }
+}
+function saveCart(cart) {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+function cartCount() {
+    var cart = getCart(), n = 0;
+    for (var k in cart) n += cart[k].quantity;
+    return n;
+}
+function updateCartBadge() {
+    var count = cartCount();
+    var badges = document.querySelectorAll('.cart-badge, .cart-count');
+    if (count > 0 && badges.length === 0) {
+        var cartLink = document.querySelector('a[href="cart.php"]');
+        if (cartLink) {
+            var badge = document.createElement('span');
+            badge.className = 'cart-count';
+            badge.textContent = count;
+            cartLink.appendChild(badge);
+        }
+    } else {
+        badges.forEach(function(b) {
+            b.textContent = count;
+            b.style.display = count > 0 ? '' : 'none';
+        });
+    }
+}
+function showToast(msg) {
+    var toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    requestAnimationFrame(function() { toast.classList.add('show'); });
+    setTimeout(function() {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 2500);
+}
+
+// Add-to-cart forms
 document.querySelectorAll('form[data-ajax-cart]').forEach(function(form) {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         var btn = form.querySelector('[type="submit"]');
         var originalText = btn ? btn.innerHTML : '';
-        if (btn) { btn.disabled = true; btn.dataset.originalHtml = originalText; btn.innerHTML = 'Adding...'; }
+        if (btn) { btn.disabled = true; btn.innerHTML = 'Adding...'; }
 
-        var formData = new FormData(form);
-        formData.append('ajax', '1');
+        var productId = form.querySelector('input[name="product_id"]').value;
+        var qtyInput = form.querySelector('input[name="quantity"]');
+        var quantity = qtyInput ? Math.max(1, parseInt(qtyInput.value) || 1) : 1;
 
-        fetch(form.action, {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body: formData
-        })
-        .then(function(r) {
-            var ct = r.headers.get('content-type') || '';
-            if (ct.indexOf('application/json') === -1) {
-                throw new Error('Server did not return JSON');
-            }
-            return r.json();
-        })
-        .then(function(data) {
-            if (data.success) {
-                var badges = document.querySelectorAll('.cart-badge, .cart-count');
-                if (data.cart_count > 0 && badges.length === 0) {
-                    var cartLink = document.querySelector('a[href="cart.php"]');
-                    if (cartLink) {
-                        var badge = document.createElement('span');
-                        badge.className = 'cart-count';
-                        badge.textContent = data.cart_count;
-                        cartLink.appendChild(badge);
-                    }
-                } else {
-                    badges.forEach(function(b) {
-                        b.textContent = data.cart_count;
-                        b.style.display = data.cart_count > 0 ? '' : 'none';
-                    });
-                }
-                var toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.textContent = data.message;
-                document.body.appendChild(toast);
-                requestAnimationFrame(function() { toast.classList.add('show'); });
-                setTimeout(function() {
-                    toast.style.opacity = '0';
-                    toast.style.transition = 'opacity 0.3s';
-                    setTimeout(function() { toast.remove(); }, 300);
-                }, 2500);
-            } else {
-                alert(data.message || 'Could not add to cart.');
-            }
-        })
-        .catch(function(err) {
-            console.error('Add to cart failed:', err);
-            alert('Could not connect to the server. Please check your internet connection and try again.');
-        })
-        .finally(function() {
-            if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
-        });
+        // Extract product info from the page
+        var productCard = form.closest('.product-card');
+        var productForm = form.closest('.product-buy-form');
+        var name = '', price = 0, image = '';
+
+        if (productForm) {
+            // Detail page
+            var h1 = document.querySelector('h1');
+            name = h1 ? h1.textContent.trim() : 'Product';
+            var priceEl = document.querySelector('.product-price .price, .price');
+            if (priceEl) price = parseFloat(priceEl.textContent.replace(/[^0-9.]/g, '')) || 0;
+            var imgEl = document.querySelector('.product-image img, .product-detail img');
+            if (imgEl) image = imgEl.src;
+        } else if (productCard) {
+            // Card on listing page
+            var h3 = productCard.querySelector('h3');
+            name = h3 ? h3.textContent.trim() : 'Product';
+            var priceSpan = productCard.querySelector('.price');
+            if (priceSpan) price = parseFloat(priceSpan.textContent.replace(/[^0-9.]/g, '')) || 0;
+            var img = productCard.querySelector('img');
+            if (img) image = img.src;
+        }
+
+        var cart = getCart();
+        if (cart[productId]) {
+            cart[productId].quantity += quantity;
+        } else {
+            cart[productId] = { id: productId, name: name, price: price, image: image, quantity: quantity };
+        }
+        saveCart(cart);
+        updateCartBadge();
+        showToast('Product added to cart!');
+
+        if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
     });
 });
+
+// Update badge on page load
+updateCartBadge();
 
 // Toast notifications for flash messages
 (function() {

@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', '0');
+error_reporting(E_ERROR);
+ob_start();
+
 require_once __DIR__ . '/config/functions.php';
 
 $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
@@ -6,6 +10,7 @@ $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
           || ($_POST['ajax'] ?? '') === '1';
 
 function jsonResponse($data) {
+    while (ob_get_level()) ob_end_clean();
     if (!headers_sent()) {
         header('Content-Type: application/json');
     }

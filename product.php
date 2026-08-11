@@ -13,16 +13,20 @@ if (!$product) {
     exit;
 }
 
-$cat = db()->prepare('SELECT name, slug FROM categories WHERE id = ?');
-$cat->execute([$product['category_id']]);
-$catInfo = $cat->fetch();
+try {
+    $cat = db()->prepare('SELECT name, slug FROM categories WHERE id = ?');
+    $cat->execute([$product['category_id']]);
+    $catInfo = $cat->fetch();
+} catch (Throwable $e) { $catInfo = false; }
 
 $reviews = get_product_reviews($product['id']);
 $rating = get_avg_rating($product['id']);
 
-$related = db()->prepare('SELECT * FROM products WHERE category_id = ? AND id != ? AND is_active = 1 ORDER BY RAND() LIMIT 4');
-$related->execute([$product['category_id'], $product['id']]);
-$relatedProducts = $related->fetchAll();
+try {
+    $related = db()->prepare('SELECT * FROM products WHERE category_id = ? AND id != ? AND is_active = 1 ORDER BY RAND() LIMIT 4');
+    $related->execute([$product['category_id'], $product['id']]);
+    $relatedProducts = $related->fetchAll();
+} catch (Throwable $e) { $relatedProducts = []; }
 
 $pageTitle = $product['name'];
 include __DIR__ . '/includes/header.php';

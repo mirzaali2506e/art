@@ -64,7 +64,9 @@ $pageSlug   = $activePage ?? '';
                 </button>
                 <div class="nav-dropdown-menu">
                     <?php foreach ($categories as $cat):
-                        $count = db()->query('SELECT COUNT(*) FROM products WHERE category_id='.(int)$cat['id'].' AND is_active=1')->fetchColumn();
+                        try {
+                            $count = db()->query('SELECT COUNT(*) FROM products WHERE category_id='.(int)$cat['id'].' AND is_active=1')->fetchColumn();
+                        } catch (Throwable $e) { $count = 0; }
                     ?>
                         <a href="category.php?slug=<?= e($cat['slug']) ?>">
                             <?= e($cat['name']) ?>
