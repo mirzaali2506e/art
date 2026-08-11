@@ -76,13 +76,30 @@ document.querySelectorAll('form[data-ajax-cart]').forEach(function(form) {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         })
-        .then(function(r) { return r.json(); })
+        .then(function(r) {
+            var ct = r.headers.get('content-type') || '';
+            if (ct.indexOf('application/json') === -1) {
+                throw new Error('Server did not return JSON');
+            }
+            return r.json();
+        })
         .then(function(data) {
             if (data.success) {
-                // Update cart badge
                 var badges = document.querySelectorAll('.cart-badge, .cart-count');
-                badges.forEach(function(b) { b.textContent = data.cart_count; });
-                // Show toast
+                if (data.cart_count > 0 && badges.length === 0) {
+                    var cartLink = document.querySelector('a[href="cart.php"]');
+                    if (cartLink) {
+                        var badge = document.createElement('span');
+                        badge.className = 'cart-count';
+                        badge.textContent = data.cart_count;
+                        cartLink.appendChild(badge);
+                    }
+                } else {
+                    badges.forEach(function(b) {
+                        b.textContent = data.cart_count;
+                        b.style.display = data.cart_count > 0 ? '' : 'none';
+                    });
+                }
                 var toast = document.createElement('div');
                 toast.className = 'toast';
                 toast.textContent = data.message;
@@ -97,7 +114,10 @@ document.querySelectorAll('form[data-ajax-cart]').forEach(function(form) {
                 alert(data.message || 'Could not add to cart.');
             }
         })
-        .catch(function() { alert('Network error. Please try again.'); })
+        .catch(function(err) {
+            console.error('Add to cart failed:', err);
+            alert('Could not connect to the server. Please check your internet connection and try again.');
+        })
         .finally(function() {
             if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
         });

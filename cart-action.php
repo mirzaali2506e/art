@@ -6,7 +6,9 @@ $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
           || ($_POST['ajax'] ?? '') === '1';
 
 function jsonResponse($data) {
-    header('Content-Type: application/json');
+    if (!headers_sent()) {
+        header('Content-Type: application/json');
+    }
     echo json_encode($data);
     exit;
 }
@@ -23,12 +25,19 @@ $action = $_POST['action'] ?? '';
 
 switch ($action) {
     case 'add':
-        $ok = add_to_cart((int)$_POST['product_id'], max(1, (int)($_POST['quantity'] ?? 1)));
+        try {
+            $ok = add_to_cart((int)$_POST['product_id'], max(1, (int)($_POST['quantity'] ?? 1)));
+            $count = cart_count();
+        } catch (Throwable $e) {
+            error_log('add_to_cart failed: ' . $e->getMessage());
+            $ok = false;
+            $count = 0;
+        }
         if ($isAjax) {
             jsonResponse([
                 'success' => $ok !== false,
-                'message' => $ok ? 'Product added to cart!' : 'Could not add to cart.',
-                'cart_count' => cart_count(),
+                'message' => $ok ? 'Product added to cart!' : 'Could not add to cart. Please try again.',
+                'cart_count' => $count,
             ]);
         }
         flash('success', 'Product added to cart!');
