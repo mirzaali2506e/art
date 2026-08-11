@@ -61,8 +61,9 @@ include __DIR__ . '/includes/header.php';
 </section>
 
 <script>
-// Clear the cart from localStorage after successful order
+// Clear the cart and buy-now data after successful order
 localStorage.removeItem('tooba_cart');
+localStorage.removeItem('tooba_buy_now');
 </script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

@@ -16,6 +16,9 @@ include __DIR__ . '/includes/header.php';
 <section class="section">
     <div class="container">
         <h1 class="mb-4">Checkout</h1>
+        <div id="buy-now-notice" class="alert alert-info" style="display:none">
+            <strong>Direct Purchase:</strong> You're checking out a single item. Your cart is not affected.
+        </div>
 
         <?php if ($error = flash('error')): ?>
             <div class="alert alert-error"><?= e($error) ?></div>
@@ -87,12 +90,23 @@ function getCart() {
 }
 function fmt(n) { return 'PKR ' + Math.round(n).toLocaleString(); }
 
-var cart = getCart();
-var items = Object.values(cart);
+var params = new URLSearchParams(window.location.search);
+var isBuyNow = params.get('buy_now') === '1';
+var items;
+
+if (isBuyNow) {
+    try { items = JSON.parse(localStorage.getItem('tooba_buy_now') || '[]'); }
+    catch(e) { items = []; }
+} else {
+    var cart = getCart();
+    items = Object.values(cart);
+}
+
 var empty = items.length === 0;
 
 document.getElementById('checkout-empty').style.display = empty ? '' : 'none';
 document.getElementById('checkout-form').style.display = empty ? 'none' : '';
+document.getElementById('buy-now-notice').style.display = isBuyNow ? '' : 'none';
 
 if (!empty) {
     var itemsHtml = '';

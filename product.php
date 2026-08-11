@@ -83,7 +83,7 @@ include __DIR__ . '/includes/header.php';
                         </div>
                         <div class="product-buy-buttons">
                             <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
-                            <button type="button" class="btn btn-accent btn-lg" onclick="var q=this.form.querySelector('input[name=quantity]').value;window.location.href='checkout.php?buy_now=<?= (int)$product['id'] ?>&qty='+encodeURIComponent(q)">Buy Now</button>
+                            <button type="button" class="btn btn-accent btn-lg" id="buy-now-btn" data-product-id="<?= (int)$product['id'] ?>" data-product-name="<?= e($product['name']) ?>" data-product-price="<?= e(current_price($product)) ?>" data-product-image="<?= e($product['image'] ?: placeholder_image($product['name'])) ?>">Buy Now</button>
                         </div>
                     </form>
                 <?php endif; ?>
@@ -167,4 +167,20 @@ include __DIR__ . '/includes/header.php';
 </section>
 <?php endif; ?>
 
+<script>
+document.getElementById('buy-now-btn').addEventListener('click', function() {
+    var btn = this;
+    var qtyInput = document.querySelector('input[name="quantity"]');
+    var qty = qtyInput ? Math.max(1, parseInt(qtyInput.value) || 1) : 1;
+    var item = {
+        id: btn.dataset.productId,
+        name: btn.dataset.productName,
+        price: parseFloat(btn.dataset.productPrice) || 0,
+        image: btn.dataset.productImage,
+        quantity: qty
+    };
+    localStorage.setItem('tooba_buy_now', JSON.stringify([item]));
+    window.location.href = 'checkout.php?buy_now=1';
+});
+</script>
 <?php include __DIR__ . '/includes/footer.php'; ?>
